@@ -39,32 +39,32 @@ public class Player{
      */
     public HashMap<String, String> getBattle(int wIndex){
         HashMap<String, String> weapon = inventory.get(wIndex).getItem();
-        HashMap<String, String> result = new HashMap<>();
+        HashMap<String, String> battleData = new HashMap<>();
         //Speed
         int weight = Integer.parseInt(weapon.get("weight"));
         int speed;
         if(weight > con) speed = spd + (con - weight);
         else speed = spd;
-        result.put("speed", String.valueOf(speed));
+        battleData.put("speed", String.valueOf(speed));
         //Hit
-        result.put("hit", String.valueOf(((2 * skl) + (0.5 * lck) + Integer.parseInt(weapon.get("hit")) + aHit(weapon.get("type")))));
+        battleData.put("hit", String.valueOf(((2 * skl) + (0.5 * lck) + Integer.parseInt(weapon.get("hit")) + aHit(weapon.get("type")))));
         //Attack. Since weapon damage can be triple if effective it must be separated from unit's attack.
-        if(Boolean.parseBoolean(weapon.get("dType"))) result.put("attack", String.valueOf(str + aAttack(weapon.get("type"))));
-        else result.put("attack", String.valueOf(mag + aAttack(weapon.get("type"))));
-        result.put("might", weapon.get("might"));
+        if(Boolean.parseBoolean(weapon.get("dType"))) battleData.put("attack", String.valueOf(str + aAttack(weapon.get("type"))));
+        else battleData.put("attack", String.valueOf(mag + aAttack(weapon.get("type"))));
+        battleData.put("might", weapon.get("might"));
         //Critical
-        result.put("critical", String.valueOf(Integer.parseInt(weapon.get("critical")) + (0.5 * skl)));
+        battleData.put("critical", String.valueOf(Integer.parseInt(weapon.get("critical")) + (0.5 * skl)));
         //Evasion
-        result.put("evasion", String.valueOf((2 * speed) + lck));
+        battleData.put("evasion", String.valueOf((2 * speed) + lck));
         //Def and Res
-        result.put("def", String.valueOf(def));
-        result.put("res", String.valueOf(res));
+        battleData.put("def", String.valueOf(def));
+        battleData.put("res", String.valueOf(res));
         //Type
-        result.put("Type", weapon.get("Type"));
+        battleData.put("Type", weapon.get("Type"));
         //Effective
-        result.put("Effective", weapon.get("Effective"));
+        battleData.put("Effective", weapon.get("Effective"));
 
-        return result;
+        return battleData;
     }
 
     private int aHit(String type) {
