@@ -11,8 +11,8 @@ public class Item implements Cloneable {
     static final String TAG = "Item";
     private boolean drop = false;
     String name, effect;
-    int might = 0, hit = 0, critical = 0, weight = 0, minRange = 0, maxRange = 0, durability, expGranted = 0;
-    char proficiency = 'E';
+    int weight = 0, minRange = 0, maxRange = 0, durability, expGranted = 0;
+    char rank = 'E';
 
     /**
      * Creates a consumable item that cannot be equipped or used in battle.
@@ -40,19 +40,6 @@ public class Item implements Cloneable {
     }
 
     /**
-     * Gets all item's data.
-     * @return List with the item's data.
-     */
-    public HashMap<String, String> getItem(){
-        HashMap<String, String> item = new HashMap<>();
-        item.put("name", name);
-        item.put("durability", String.valueOf(durability));
-        item.put("effect", effect);
-
-        return item;
-    }
-
-    /**
      * Sets the item as droppable.
      */
     public void setDrop(){
@@ -65,6 +52,38 @@ public class Item implements Cloneable {
      */
     public boolean isDrop() {
         return drop;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEffect() {
+        return effect;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public int getMinRange() {
+        return minRange;
+    }
+
+    public int getMaxRange() {
+        return maxRange;
+    }
+
+    public int getDurability() {
+        return durability;
+    }
+
+    public int getExpGranted() {
+        return expGranted;
+    }
+
+    public char getrank() {
+        return rank;
     }
 
     @Override

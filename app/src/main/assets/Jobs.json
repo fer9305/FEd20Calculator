@@ -1,0 +1,22 @@
+[
+  {
+    "name":"Lord",
+    "baseHp":16,
+    "hpDices":1,
+    "hpDSize":4,
+    "baseConst":2,
+    "constDices":2,
+    "constDSize":4,
+    "movement":5,
+    "mType":"foot",
+    "wProficiency":[
+      "Sword", "Lance", "Axe"
+    ],
+    "upgrade":[
+      "Great Lord"
+    ],
+    "inventory":[
+      "Vulnerary"
+    ]
+  }
+]

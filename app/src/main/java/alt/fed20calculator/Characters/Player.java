@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import alt.fed20calculator.Items.Item;
+import alt.fed20calculator.Items.Weapon;
 
 /**
  * Defines a playable character that shall fight in the army.
@@ -32,37 +33,53 @@ public class Player{
     private char hpG, strG, magG, spdG, sklG, lckG, defG, resG;
     private int swordExp, lanceExp, axeExp, bowExp, daggerExp, animaExp, lightExp, darkExp, staffExp;
 
+    public Player(String name, String job, String affinity, int hp, int con, int mov, int str, int mag, int spd, int skl, int lck, int def, int res) {
+        this.name = name;
+        this.job = job;
+        this.affinity = affinity;
+        this.hp = hp;
+        this.con = con;
+        this.mov = mov;
+        this.str = str;
+        this.mag = mag;
+        this.spd = spd;
+        this.skl = skl;
+        this.lck = lck;
+        this.def = def;
+        this.res = res;
+    }
+
     /**
      * Gets the character's data necessary to perform a battle.
      * @param wIndex Index pointing to the equipped weapon.
      * @return Character's data containing speed, hit rate, evasion, attack, weapon might, crit chance, evasion, def, res, weapon type and weapon's effectiveness.
      */
     public HashMap<String, String> getBattle(int wIndex){
-        HashMap<String, String> weapon = inventory.get(wIndex).getItem();
+        Weapon eWeapon = (Weapon) inventory.get(wIndex);
         HashMap<String, String> battleData = new HashMap<>();
         //Speed
-        int weight = Integer.parseInt(weapon.get("weight"));
+        int weight = Integer.parseInt(String.valueOf(eWeapon.getWeight()));
         int speed;
         if(weight > con) speed = spd + (con - weight);
         else speed = spd;
         battleData.put("speed", String.valueOf(speed));
         //Hit
-        battleData.put("hit", String.valueOf(((2 * skl) + (0.5 * lck) + Integer.parseInt(weapon.get("hit")) + aHit(weapon.get("type")))));
+        battleData.put("hit", String.valueOf(((2 * skl) + (0.5 * lck) + Integer.parseInt(String.valueOf(eWeapon.getHit())) + aHit(eWeapon.getType()))));
         //Attack. Since weapon damage can be triple if effective it must be separated from unit's attack.
-        if(Boolean.parseBoolean(weapon.get("dType"))) battleData.put("attack", String.valueOf(str + aAttack(weapon.get("type"))));
-        else battleData.put("attack", String.valueOf(mag + aAttack(weapon.get("type"))));
-        battleData.put("might", weapon.get("might"));
+        if(Boolean.parseBoolean(String.valueOf(eWeapon.isdType()))) battleData.put("attack", String.valueOf(str + aAttack(eWeapon.getType())));
+        else battleData.put("attack", String.valueOf(mag + aAttack(eWeapon.getType())));
+        battleData.put("might", String.valueOf(eWeapon.getMight()));
         //Critical
-        battleData.put("critical", String.valueOf(Integer.parseInt(weapon.get("critical")) + (0.5 * skl)));
+        battleData.put("critical", String.valueOf(Integer.parseInt(String.valueOf(eWeapon.getCritical())) + (0.5 * skl)));
         //Evasion
         battleData.put("evasion", String.valueOf((2 * speed) + lck));
         //Def and Res
         battleData.put("def", String.valueOf(def));
         battleData.put("res", String.valueOf(res));
         //Type
-        battleData.put("Type", weapon.get("Type"));
+        battleData.put("Type", eWeapon.getType());
         //Effective
-        battleData.put("Effective", weapon.get("Effective"));
+        battleData.put("Effective", eWeapon.getEffective());
 
         return battleData;
     }
