@@ -13,7 +13,7 @@ public class Dragonstone extends Weapon {
     public Dragonstone(Weapon.Builder builder, int[] bonuses) {
         super(builder);
         this.bonuses = bonuses;
-        Log.d(TAG, "Custom weapon " + builder.getName() + " created.");
+        Log.d(TAG, "Dragonstone " + builder.getName() + " created.");
     }
 
     public int[] getBonuses() {

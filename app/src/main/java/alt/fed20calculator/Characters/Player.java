@@ -1,5 +1,8 @@
 package alt.fed20calculator.Characters;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,7 +37,7 @@ final public class Player{
     private int swordExp = 0, lanceExp = 0, axeExp = 0, bowExp = 0, daggerExp = 0, animaExp = 0,
             lightExp = 0, darkExp = 0, staffExp = 0;
 
-    private Player(Builder builder){
+    private Player(Builder builder, JSONObject jobObj) throws JSONException {
         //Value assignation
         name = builder.getName();
         affinity = builder.getAffinity();
@@ -56,7 +59,7 @@ final public class Player{
         defG = builder.getDefG();
         resG = builder.getResG();
 
-        job = new Job(builder.getJob(), "unpromoted");
+        job = new Job(builder.getJob(), jobObj, builder.getHp(), builder.getConstitution());
         for (String item : job.getsInv()) {
             //Add items to inventory
         }
@@ -90,9 +93,9 @@ final public class Player{
         battleData.put("def", String.valueOf(def));
         battleData.put("res", String.valueOf(res));
         //Type
-        battleData.put("Type", eWeapon.getType());
+        battleData.put("type", eWeapon.getType());
         //Effective
-        battleData.put("Effective", eWeapon.getEffective());
+        battleData.put("effective", eWeapon.getEffective());
 
         return battleData;
     }
@@ -105,9 +108,8 @@ final public class Player{
     private int aHit(String type) {
         switch (type) {
             case "Sword":
-                switch (sword) {
-                    case 'S':
-                        return 5;
+                if (sword == 'S') {
+                    return 5;
                 }
                 break;
             case "Axe":
@@ -131,9 +133,8 @@ final public class Player{
                 }
                 break;
             case "Dagger":
-                switch (dagger) {
-                    case 'S':
-                        return 5;
+                if (dagger == 'S') {
+                    return 5;
                 }
                 break;
             case "Bow":
@@ -383,6 +384,7 @@ final public class Player{
      */
     public static class Builder{
         private String name, affinity, job;
+        private int hp, constitution;
         private int str, mag, spd, skl, lck, def, res;
         private char hpG, strG, magG, spdG, sklG, lckG, defG, resG;
         //Instance fields
@@ -403,6 +405,12 @@ final public class Player{
             this.name = name;
             this.affinity = affinity;
             this.job = job;
+            return this;
+        }
+
+        public Builder setJobRNGs(int hp, int constitution){
+            this.hp = hp;
+            this.constitution = constitution;
             return this;
         }
 
@@ -457,14 +465,17 @@ final public class Player{
          * Builds player object
          * @return Player instance
          */
-        public Player build()
-        {
-            return new Player(this);
+        public Player build(JSONObject jobObj) throws JSONException {
+            return new Player(this, jobObj);
         }
 
         public String getName() {
             return name;
         }
+
+        public int getHp() { return hp; }
+
+        public int getConstitution() { return constitution; }
 
         String getAffinity() {
             return affinity;

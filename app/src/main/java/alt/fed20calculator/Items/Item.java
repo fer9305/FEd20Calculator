@@ -11,8 +11,7 @@ public class Item implements Cloneable {
     static final String TAG = "Item";
     private boolean drop = false;
     String name, effect;
-    int weight = 0, minRange = 0, maxRange = 0, durability, expGranted = 0;
-    private char rank = 'E';
+    int durability, expGranted = 0;
 
     /**
      * Creates a consumable item that cannot be equipped or used in battle.
@@ -59,28 +58,12 @@ public class Item implements Cloneable {
         return effect;
     }
 
-    public int getWeight() {
-        return weight;
-    }
-
-    public int getMinRange() {
-        return minRange;
-    }
-
-    public int getMaxRange() {
-        return maxRange;
-    }
-
     public int getDurability() {
         return durability;
     }
 
     public int getExpGranted() {
         return expGranted;
-    }
-
-    public char getrank() {
-        return rank;
     }
 
     @Override
