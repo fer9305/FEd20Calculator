@@ -1,22 +1,27 @@
-[
-  {
-    "name":"Lord",
-    "baseHp":16,
-    "hpDices":1,
-    "hpDSize":4,
-    "baseConst":2,
-    "constDices":2,
-    "constDSize":4,
-    "movement":5,
-    "mType":"foot",
-    "wProficiency":[
-      "Sword", "Lance", "Axe"
-    ],
-    "upgrade":[
-      "Great Lord"
-    ],
-    "inventory":[
-      "Vulnerary"
-    ]
-  }
-]
+{
+  "unpromoted":[
+    {
+      "name":"Lord",
+      "baseHp":16,
+      "hp":"1d4+16",
+      "hpDices":1,
+      "hpDSize":4,
+      "baseConst":2,
+      "const":"2d4+2",
+      "constDices":2,
+      "constDSize":4,
+      "movement":5,
+      "mType":"foot",
+      "wProficiency":[
+        "Sword"
+      ],
+      "upgrade":[
+        "Great Lord"
+      ],
+      "inventory":[
+        "Iron Sword",
+        "Vulnerary"
+      ]
+    }
+  ]
+}

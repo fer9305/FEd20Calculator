@@ -9,13 +9,13 @@ import alt.fed20calculator.Items.Weapon;
 /**
  * Defines a playable character that shall fight in the army.
  */
-public class Player{
+final public class Player{
     private static final String TAG = "Player";
-    private String name, job, affinity;
-    private String[] weakness = {"", ""};
+    private Job job;
+    private String name, affinity;
     private boolean alive = true;
     private int level = 1, exp = 0;
-    private int hp, con, mov;
+    private int maxHp = 0, currHp, mov;
     private int str, mag, spd, skl, lck, def, res;
     private char
             sword = 'E',
@@ -31,22 +31,35 @@ public class Player{
     private ArrayList<Item> inventory;
     private ArrayList<String> skills;
     private char hpG, strG, magG, spdG, sklG, lckG, defG, resG;
-    private int swordExp, lanceExp, axeExp, bowExp, daggerExp, animaExp, lightExp, darkExp, staffExp;
+    private int swordExp = 0, lanceExp = 0, axeExp = 0, bowExp = 0, daggerExp = 0, animaExp = 0,
+            lightExp = 0, darkExp = 0, staffExp = 0;
 
-    public Player(String name, String job, String affinity, int hp, int con, int mov, int str, int mag, int spd, int skl, int lck, int def, int res) {
-        this.name = name;
-        this.job = job;
-        this.affinity = affinity;
-        this.hp = hp;
-        this.con = con;
-        this.mov = mov;
-        this.str = str;
-        this.mag = mag;
-        this.spd = spd;
-        this.skl = skl;
-        this.lck = lck;
-        this.def = def;
-        this.res = res;
+    private Player(Builder builder){
+        //Value assignation
+        name = builder.getName();
+        affinity = builder.getAffinity();
+
+        str = builder.getStr();
+        mag = builder.getMag();
+        spd = builder.getSpd();
+        skl = builder.getSkl();
+        lck = builder.getLck();
+        def = builder.getDef();
+        res = builder.getRes();
+
+        hpG = builder.getHpG();
+        strG = builder.getStrG();
+        magG = builder.getMagG();
+        spdG = builder.getSpdG();
+        sklG = builder.getSklG();
+        lckG = builder.getLckG();
+        defG = builder.getDefG();
+        resG = builder.getResG();
+
+        job = new Job(builder.getJob(), "unpromoted");
+        for (String item : job.getsInv()) {
+            //Add items to inventory
+        }
     }
 
     /**
@@ -60,7 +73,7 @@ public class Player{
         //Speed
         int weight = Integer.parseInt(String.valueOf(eWeapon.getWeight()));
         int speed;
-        if(weight > con) speed = spd + (con - weight);
+        if(weight > job.getConstitution()) speed = spd + (job.getConstitution() - weight);
         else speed = spd;
         battleData.put("speed", String.valueOf(speed));
         //Hit
@@ -84,6 +97,11 @@ public class Player{
         return battleData;
     }
 
+    /**
+     * Calculates hit bonuses depending on the weapon proficiency.
+     * @param type Type of weapon used.
+     * @return Hit bonus given by character's weapon proficiency.
+     */
     private int aHit(String type) {
         switch (type) {
             case "Sword":
@@ -93,7 +111,7 @@ public class Player{
                 }
                 break;
             case "Axe":
-                switch (lance) {
+                switch (axe) {
                     case 'C':
                         return 5;
                     case 'B':
@@ -160,6 +178,11 @@ public class Player{
         return 0;
     }
 
+    /**
+     * Calculates attack bonuses depending on the weapon proficiency.
+     * @param type Type of weapon used.
+     * @return Attack bonus given by character's weapon proficiency.
+     */
     private int aAttack(String type) {
         switch (type) {
             case "Sword":
@@ -175,7 +198,7 @@ public class Player{
                 }
                 break;
             case "Axe":
-                switch (lance) {
+                switch (axe) {
                     case 'A':
                         return 1;
                     case 'S':
@@ -262,7 +285,7 @@ public class Player{
      */
     public int hitExp(int eLevel){
         int jValue = 3;
-        if(job.equals("Soldier") || job.equals("Priest") || job.equals("Thief")) jValue = 2;
+        if(job.getJobName().equals("Soldier") || job.getJobName().equals("Priest") || job.getJobName().equals("Thief")) jValue = 2;
         int rewardedExp = (31 - (level - eLevel))/jValue;
         levelUp(rewardedExp);
         return exp;
@@ -271,12 +294,12 @@ public class Player{
     /**
      * Calculates the amount of exp gained from a victory in battle.
      * @param eLevel Enemy's level.
-     * @param eJob Enemy's class
+     * @param eJob Enemy's class name.
      * @return Unit's total exp after the battle.
      */
     public int killExp(int eLevel, String eJob){
         int jValue = 3, eValue = 3;
-        if(job.equals("Soldier") || job.equals("Priest") || job.equals("Thief")) jValue = 2;
+        if(job.getJobName().equals("Soldier") || job.getJobName().equals("Priest") || job.getJobName().equals("Thief")) jValue = 2;
         if(eJob.equals("Soldier") || eJob.equals("Priest") || eJob.equals("Thief")) eValue = 2;
         int rewardedExp = 30 + (eValue * eLevel) - (jValue * level);
         levelUp(rewardedExp);
@@ -302,8 +325,43 @@ public class Player{
         exp += rewardedExp;
         if(exp >= 100) {
             exp -= 100;
-            //Tirar aleatoriedad para subir stats.
+            //Roll to improve stats.
         }
+    }
+
+    /**
+     * Sets character's HP to max. Should be done at the beelining of a battle.
+     */
+    public void resetHp(){
+        currHp = maxHp;
+    }
+
+    /**
+     * When a character is hit or healed this method should be called to reflect HP change.
+     * @param damage Amount of HP that shall be subtracted from character's health. Must be negative if healing.
+     * @return Remaining HP.
+     */
+    public int damageReceived(int damage){
+        currHp -= damage;
+        if(currHp > maxHp){
+            currHp = maxHp;
+        }else if(currHp <= 0){
+            //Character dies
+            currHp = 0;
+            alive = false;
+        }
+        return currHp;
+    }
+
+    /**
+     * Similar to damageReceived, but this method prevents a character from dying. Should be used for environmental damage.
+     * @param damage Amount of HP that shall be subtracted from character's health. Must be negative if healing.
+     * @return Remaining HP.
+     */
+    public int enviromentalDamage(int damage){
+        currHp -= damage;
+        if(currHp <= 0) currHp = 1;
+        return currHp;
     }
 
     /**
@@ -320,7 +378,161 @@ public class Player{
         return success;
     }
 
+    /**
+     * Builder class for Player instances.
+     */
+    public static class Builder{
+        private String name, affinity, job;
+        private int str, mag, spd, skl, lck, def, res;
+        private char hpG, strG, magG, spdG, sklG, lckG, defG, resG;
+        //Instance fields
+        public static Builder newInstance(){
+            return new Builder();
+        }
 
+        private Builder(){}
 
+        /**
+         * Sets primary properties for the character.
+         * @param name Character's name.
+         * @param affinity Character's affinity.
+         * @param job Character's class.
+         * @return Builder object
+         */
+        public Builder setName(String name, String affinity, String job){
+            this.name = name;
+            this.affinity = affinity;
+            this.job = job;
+            return this;
+        }
+
+        /**
+         * Sets initial stats for the character.
+         * @param str Strength
+         * @param mag Magic
+         * @param spd Speed
+         * @param skl Skill
+         * @param lck Luck
+         * @param def Defense
+         * @param res Resistance
+         * @return Builder object
+         */
+        public Builder setStats(int str, int mag, int spd, int skl, int lck, int def, int res){
+            this.str = str;
+            this.mag = mag;
+            this.spd = spd;
+            this.skl = skl;
+            this.lck = lck;
+            this.def = def;
+            this.res = res;
+            return this;
+        }
+
+        /**
+         * Sets growths for each stat that can increment in level ups.
+         * @param hpG HP increment
+         * @param strG Strength increment
+         * @param magG Magic increment
+         * @param spdG Speed increment
+         * @param sklG Skill increment
+         * @param lckG Luck increment
+         * @param defG Defense increment
+         * @param resG Luck increment
+         * @return Builder object
+         */
+        public Builder setGrowths(char hpG, char strG, char magG, char spdG, char sklG, char lckG, char defG, char resG) {
+            this.hpG = hpG;
+            this.strG = strG;
+            this.magG = magG;
+            this.spdG = spdG;
+            this.sklG = sklG;
+            this.lckG = lckG;
+            this.defG = defG;
+            this.resG = resG;
+
+            return this;
+        }
+
+        /**
+         * Builds player object
+         * @return Player instance
+         */
+        public Player build()
+        {
+            return new Player(this);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        String getAffinity() {
+            return affinity;
+        }
+
+        String getJob() {
+            return job;
+        }
+
+        int getStr() {
+            return str;
+        }
+
+        int getMag() {
+            return mag;
+        }
+
+        int getSpd() {
+            return spd;
+        }
+
+        int getSkl() {
+            return skl;
+        }
+
+        int getLck() {
+            return lck;
+        }
+
+        int getDef() {
+            return def;
+        }
+
+        int getRes() {
+            return res;
+        }
+
+        char getHpG() {
+            return hpG;
+        }
+
+        char getStrG() {
+            return strG;
+        }
+
+        char getMagG() {
+            return magG;
+        }
+
+        char getSpdG() {
+            return spdG;
+        }
+
+        char getSklG() {
+            return sklG;
+        }
+
+        char getLckG() {
+            return lckG;
+        }
+
+        char getDefG() {
+            return defG;
+        }
+
+        char getResG() {
+            return resG;
+        }
+    }
 
 }

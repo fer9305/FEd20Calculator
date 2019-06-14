@@ -6,11 +6,21 @@ import java.util.HashMap;
 
 public class Weapon extends Item {
 
-    boolean dType, inverted = false;
-    int might = 0, hit = 0, critical = 0;
-    String effective, type;
+    private boolean dType, inverted;
+    private int might, hit, critical;
+    private String effective, type, triangle;
 
-    Weapon() {
+    public Weapon(Builder builder) {
+        super(builder.getName(), builder.getDurability(), builder.getEffect());
+        dType = builder.isdType();
+        inverted = builder.isInverted();
+        might = builder.getMight();
+        hit = builder.getHit();
+        critical = builder.getCritical();
+        effective = builder.getEffective();
+        type = builder.getType();
+        triangle = builder.getTriangle();
+
     }
 
     /**
@@ -40,6 +50,8 @@ public class Weapon extends Item {
         return type;
     }
 
+    public String getTriangle() { return triangle; }
+
     public int getMight() {
         return might;
     }
@@ -65,5 +77,60 @@ public class Weapon extends Item {
      */
     public boolean isInverted() {
         return inverted;
+    }
+
+    public static class Builder {
+        private int durability, might, hit, critical;
+        private String name, effective, type, triangle, effect;
+        private char rank;
+        private boolean dType, inverted;
+
+        public int getDurability() {
+            return durability;
+        }
+
+        public int getMight() {
+            return might;
+        }
+
+        public int getHit() {
+            return hit;
+        }
+
+        public int getCritical() {
+            return critical;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEffective() {
+            return effective;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getTriangle() {
+            return triangle;
+        }
+
+        public String getEffect() {
+            return effect;
+        }
+
+        public char getRank() {
+            return rank;
+        }
+
+        public boolean isdType() {
+            return dType;
+        }
+
+        public boolean isInverted() {
+            return inverted;
+        }
     }
 }

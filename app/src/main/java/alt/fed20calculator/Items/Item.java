@@ -12,7 +12,7 @@ public class Item implements Cloneable {
     private boolean drop = false;
     String name, effect;
     int weight = 0, minRange = 0, maxRange = 0, durability, expGranted = 0;
-    char rank = 'E';
+    private char rank = 'E';
 
     /**
      * Creates a consumable item that cannot be equipped or used in battle.
@@ -24,9 +24,6 @@ public class Item implements Cloneable {
         this.name = name;
         this.durability = durability;
         this.effect = effect;
-    }
-
-    Item() {
     }
 
     /**
